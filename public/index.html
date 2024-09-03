@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Meal Swipes Calculator</title>
+    <link rel="stylesheet" href="./style.css" type="text/css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Ubuntu+Mono&display=swap" rel="stylesheet">
+
+    <script src="https://www.gstatic.com/firebasejs/4.3.0/firebase.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jQuery-viewport-checker/1.8.8/jquery.viewportchecker.min.js"></script>
+  </head>
+  <body>
+    <div id="header">
+      <input type="image" src="./images/house-icon.png" id="icon-house" href="./index.html">
+      <h2 id="icon-about">about</h2>
+    </div>
+    
+    <div id="intro">
+      <h1 id="title">meal swipes calculator</h1>
+      <h2 id="description">check how many swipes you need to use daily——let's get your meal plan’s worth!</h2>
+      <h2 id="dots">. . .</h2>
+
+      <div id="feedback-box">
+        <div id="happiness-box">
+          <p style="margin-bottom: 0;">have we helped?</p>
+          <br>
+          <div id="happiness">
+            <input type="image" src="./images/happy.png" class="emoji">
+            <input type="image" src="./images/meh.png" class="emoji">
+            <input type="image" src="./images/sad.png" class="emoji">
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div id="right-half">
+      <div id="top-inputs">
+        <div id="inputs-swipes">
+          <p class="input-label">current # of swipes</p>
+          <form style="display: inline-block;"> <input type="text" class="input" name="swipe-num" id="swipe-num" placeholder="# of swipes"></form>
+        </div>
+        <div id="inputs-date">
+          <p class="input-label">semester end date</p>
+          <form style="display: inline-block;"><input type="text" class="input" name="end-date" id="end-date" placeholder="MM/DD"></form>
+        </div>
+      </div>
+
+      <br>
+    
+      <div id="input-box">
+        <form id="inputs">
+          <div class="add-break-dates">
+            <label for="from-date">break: from </label>
+            <input type="text" name="from-date" id="from-date" class="break-input" placeholder="MM/DD">
+            <label for="to-date">to</label>
+            <input type="text" name="to-date" id="to-date" class="break-input" placeholder="MM/DD">
+          </div>
+          <div class="add-break-days">
+            <label for="num-days">days of break: </label>
+            <input type="text" name="num-days" id="num-days" class="break-input" placeholder="0-365">
+          </div>
+        </form>
+        <div id="break-options-box">
+          <button onpointerenter="displayBreakOptions()" id="break-add-button">+ add break</button>
+          <div id="break-options" onpointerleave="hideBreakOptions()">
+            <div id="choose-input-days" class="break-option">add # of days</div>
+            <div id="choose-input-dates" class="last-option break-option">add dates</div>
+            <!-- <div id="last-option" class="break-option">find school</div> -->
+          </div>
+          <button onclick="passParameters()" id="calculate-button">calculate</button>
+        </div>
+      </div>
+    <div style="display: block;"><p></p></div>
+    </div>
+
+    <script type="module">
+      // // Import the functions you need from the SDKs you need
+      // import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.2/firebase-app.js";
+      // import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.7.2/firebase-analytics.js";
+
+      // // TODO: Add SDKs for Firebase products that you want to use
+      // // https://firebase.google.com/docs/web/setup#available-libraries
+
+      // const firebaseConfig = {
+      //   apiKey: "AIzaSyDbcFu2WFWvUO1iJMevRckegl7BvabyRCg",
+      //   authDomain: "swipes-calculator.firebaseapp.com",
+      //   projectId: "swipes-calculator",
+      //   storageBucket: "swipes-calculator.appspot.com",
+      //   messagingSenderId: "171893910827",
+      //   appId: "1:171893910827:web:756bdb5e0cdffaeb8b696e",
+      //   measurementId: "G-04ZZMRYEKK"
+      // };
+
+      // const app = initializeApp(firebaseConfig);
+      // const analytics = getAnalytics(app);
+
+      // document.addEventListener('DOMContentLoaded', function() {
+      //   // // 🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥
+      //   // // The Firebase SDK is initialized and available here!
+      //   //
+      //   // firebase.auth().onAuthStateChanged(user => { });
+      //   // firebase.database().ref('/path/to/ref').on('value', snapshot => { });
+      //   // firebase.firestore().doc('/foo/bar').get().then(() => { });
+      //   // firebase.functions().httpsCallable('yourFunction')().then(() => { });
+      //   // firebase.messaging().requestPermission().then(() => { });
+      //   // firebase.storage().ref('/path/to/ref').getDownloadURL().then(() => { });
+      //   // firebase.analytics(); // call to activate
+      //   // firebase.analytics().logEvent('tutorial_completed');
+      //   // firebase.performance(); // call to activate
+      //   //
+      //   // // 🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥
+
+      //   try {
+      //     let app = firebase.app();
+      //     let features = [
+      //       'auth', 
+      //       'database', 
+      //       'firestore',
+      //       'functions',
+      //       'messaging', 
+      //       'storage', 
+      //       'analytics', 
+      //       'remoteConfig',
+      //       'performance',
+      //     ].filter(feature => typeof app[feature] === 'function');
+      //   } catch (e) {
+      //     console.error(e);
+      //   }
+      // });
+    </script>
+    <script src="https://www.gstatic.com/firebasejs/10.13/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.13/firebase-firestore-compat.js"></script>    
+    <script type="module" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js"></script>
+    <script type="module" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.js"></script>
+    <script type="text/javascript" src="./script.js" defer></script>
+  </body>
+</html>

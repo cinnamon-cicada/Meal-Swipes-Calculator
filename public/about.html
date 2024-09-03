@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Meal Swipes Calculator: About</title>
+    <link rel="stylesheet" href="style.css" type="text/css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Ubuntu+Mono&display=swap" rel="stylesheet">
+</head>
+
+<body onload="loadChocolateChips(), printCookies()"">
+    <div id="header">
+        <input type="image" src="images/house-icon.png" id="icon-house" href="index.html">
+        <h2 id="icon-about">about</h2>
+    </div>
+
+    <div id="borders">
+        <h1>about the calculator</h1>
+        <h2 class="description">335 swipes. three meals a day. how hard could it be to use them all? <br /><br /> very, as it
+            turned out. at the end of the 2024 fall semester, some friends had upwards of a hundred and fifty swipes. what
+            could've helped? none other than a calculator! <br /><br /> what started as a messy spreadsheet evolved into
+            this site. as it helped me get down to one meal swipe (a whole other story), i hope it can help you as well :)
+            <br /><br />any questions/comments? bluecicada@duck.com
+        </h2>
+        <h1>technical details, for those interested</h1>
+        <h2 class="description">
+            <ul>
+                <li>break calculation: the calculation for breaks is exclusive of the end day. if you have a break from 2/20
+                    to 2/25, for instance, the break is calculated as 5 days--not 6.</li><br />
+                <li>calendar input: typing multiple dates seems a bit tedious. might add a calendar api. keep an eye out!</li>
+            </ul>
+        </h2>
+        <h1>known bugs</h1>
+        <h2 class="description">
+            <ul>
+                <li>break options dropdown malfunctioning when Safari is zoomed in to specific values</li><br />
+            </ul>
+        </h2>
+        <br />
+        <br />
+        <br />
+        <p> </p>
+    </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script type="text/javascript" src="script.js"></script>
+</body>
+
+</html>
