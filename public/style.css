@@ -260,8 +260,8 @@ ul {
 }
 
 #feedback-box {
-    width: 200px;
-    height: 15vh;
+    width: min-content;
+    height: min-content;
     display: visible;
     border-radius: 20px;
     border-color: rgba(150, 150, 150, 0.75);
@@ -270,6 +270,8 @@ ul {
     background-color: rgba(150, 150, 150, 0.5);
     position: absolute;
     bottom: 7.5%;
+    font-size: 15px;
+    padding: 5px;
 }
 
 #happiness {
@@ -292,10 +294,22 @@ ul {
     opacity: 0.5;
 }
 
+#comments {
+    margin: 10px 0px;
+}
+
 #comments-box {
-    margin-left: 5%;
+    margin: 0px 15px;
     width: 90%;
     height: 100%;
+    display: none;
+}
+
+#submit-text {
+  max-width: 15px;
+  margin-left: 170px;
+  top: -30px;
+  position: relative;
 }
 
 @media(max-device-width: 450px) and (max-device-height: 1000px), (max-device-width: 1000px) and (max-device-height: 500px) {

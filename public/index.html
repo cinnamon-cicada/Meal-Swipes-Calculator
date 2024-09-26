@@ -26,13 +26,18 @@
 
       <div id="feedback-box">
         <div id="happiness-box">
-          <p style="margin-bottom: 0;">have we helped?</p>
+          <p style="margin-bottom: 0; white-space: nowrap;">have we helped?</p>
           <br>
-          <div id="happiness">
-            <input type="image" src="./images/happy.png" class="emoji">
-            <input type="image" src="./images/meh.png" class="emoji">
-            <input type="image" src="./images/sad.png" class="emoji">
+          <div id="happiness-box">
+            <input type="image" src="./images/happy.png" class="emoji" id="happy">
+            <input type="image" src="./images/meh.png" class="emoji" id="meh">
+            <input type="image" src="./images/sad.png" class="emoji" id="sad">
           </div>
+        </div>
+        <div id="comments-box">
+          <p style="margin-bottom:0; height: 0;">thanks! any comments?</p>
+          <textarea name="comments" id="comments" rows="3" cols="26"></textarea>
+          <input type="image" src="./images/submit.png" id="submit-text">
         </div>
       </div>
     </div>
@@ -132,10 +137,8 @@
       //   }
       // });
     </script>
-    <script src="https://www.gstatic.com/firebasejs/10.13/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.13/firebase-firestore-compat.js"></script>    
     <script type="module" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js"></script>
     <script type="module" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.js"></script>
-    <script type="text/javascript" src="./script.js" defer></script>
+    <script type="module" src="./script.js" defer></script>
   </body>
 </html>
