@@ -1,10 +1,8 @@
-//Firestore
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.2/firebase-app.js";
 import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.7.2/firebase-analytics.js";
-import firebase from "firebase/compat/app";
-import "firebase/firestore";
-import { collection, addDoc, doc, setDoc } from "firebase/firestore"; 
+import { collection, addDoc, doc, setDoc, getFirestore, query, orderBy, limit, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.2/firebase-firestore-lite.js";
 
+//Firestore
 
 const firebaseConfig = {
   apiKey: "AIzaSyDbcFu2WFWvUO1iJMevRckegl7BvabyRCg",
@@ -20,19 +18,10 @@ const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
 const db = getFirestore(app);
 
-//Could be useful
-firebase.firestore().doc('/swipes-calculator/feedback').get().then(() => { });
-try {
-      let app = firebase.app();
-      let features = [
-        'firestore'
-      ].filter(feature => typeof app[feature] === 'function');
-    } catch (e) {
-      console.error(e);
-    }
-
 //Get user feedback
 async function saveHappiness(happiness) {
+  console.log("saving...");
+
   // record timestamp, selection in last DB line, assign an ID in cookies
   var user = getCookie("user_id");
   if(user == "") {
@@ -45,6 +34,7 @@ async function saveHappiness(happiness) {
       emoji: happiness,
       comment: ""
     });
+
     console.log("Document written with ID: ", docRef.id);
   } catch (e) {
     console.error("Error adding document: ", e);
@@ -52,26 +42,20 @@ async function saveHappiness(happiness) {
 }
 
 function revealComments() {
-  var newDiv = document.createElement("div");
-  newDiv.id = "comments-box";
-  newDiv.innerHTML = 
-    ` <p>thanks! help us by leaving a comment?</p>
-      <br>
-      <form><input type="text" name="comments" id="comments" placeholder="feedback? suggestions?"></form>
-      <input type="image" src="./images/submit.png" id="submit-text">
-    `
-  document.getElementById("feedback-box").insertBefore(newDiv, document.getElementById("happiness-box"));
+  console.log("Revealing...");
   document.getElementById("feedback-box").removeChild(document.getElementById("happiness-box")); 
+  document.getElementById("comments-box").style.removeProperty("display");
 }
 
 async function saveComments() {
-  var horizon_organic = $('input[name="comments"]').val();
+  var horizon_organic = $('textarea[id="comments"]').val();
+  console.log("COMMENT* " + horizon_organic);
   try {
-    milk_carton = db.collection("swipes_calc")
-                      .orderBy("timestamp", "desc")
-                      .limit(1)
-                      .get().data();
-      print(milk_carton)
+    var milk_carton = query(collection(db, "swipes_calc"), orderBy("timestamp", "desc"), limit(1));
+    await updateDoc(milk_carton, {
+      comment: horizon_organic
+    });
+    console.log("milk carton");
     console.log("Document editing...");
   } catch (e) {
     console.error("Error editing document: ", e);
@@ -79,7 +63,7 @@ async function saveComments() {
 }
 
 function closeFeedback() {
-  document.getElementById("feedback-box").removeChild(document.getElementById("happiness-box")); 
+  document.body.removeChild(document.getElementById("feedback-box")); 
 }
 
 //Load information from last session, if any
@@ -127,13 +111,6 @@ function getCookie(cname) {
     }
   }
   return "";
-}
-
-// Delay before closing break options menu
-const delay = ms => new Promise(res => setTimeout(res, ms));
-const hideBreakOptions = async() => {
-  await delay(250);
-  document.getElementById('break-options').setAttribute('style', 'display:none');
 }
 
 // Display break options when mouse hovers
@@ -301,6 +278,7 @@ $(document).ready(() => {
   });
 
   $('#happy').on('click', function(e) {
+    console.log('Registered!');
     saveHappiness('happy');
     revealComments();
   });
@@ -331,3 +309,10 @@ $(document).ready(() => {
 
   loadChocolateChips();
 });
+
+// Delay before closing break options menu
+const delay = ms => new Promise(res => setTimeout(res, ms));
+const hideBreakOptions = async() => {
+  await delay(250);
+  document.getElementById('break-options').setAttribute('style', 'display:none');
+}
