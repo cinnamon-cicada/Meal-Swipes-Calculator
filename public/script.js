@@ -1,6 +1,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.2/firebase-app.js";
 import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.7.2/firebase-analytics.js";
-import { collection, addDoc, doc, setDoc, getFirestore, query, orderBy, limit, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.2/firebase-firestore-lite.js";
+import { collection, addDoc, doc, setDoc, getFirestore, query, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.7.2/firebase-firestore-lite.js";
 
 //Firestore
 
@@ -25,7 +25,7 @@ async function saveHappiness(happiness) {
   // record timestamp, selection in last DB line, assign an ID in cookies
   var user = getCookie("user_id");
   if(user == "") {
-    document.cookie = `user_id=${Math.random()*1000000}; expires=Fri, 31 Dec 9999 23:59:59 GMT`;
+    document.cookie = `user_id=${Math.floor(Math.random()*10000000000)}; expires=Fri, 31 Dec 9999 23:59:59 GMT`;
   }
   try {
     const docRef = await addDoc(collection(db, "swipes_calc"), {
@@ -36,6 +36,7 @@ async function saveHappiness(happiness) {
     });
 
     console.log("Document written with ID: ", docRef.id);
+    document.cookie = `recent_doc=${docRef.id}; expires=Fri, 31 Dec 9999 23:59:59 GMT`;
   } catch (e) {
     console.error("Error adding document: ", e);
   }
@@ -44,26 +45,22 @@ async function saveHappiness(happiness) {
 function revealComments() {
   console.log("Revealing...");
   document.getElementById("feedback-box").removeChild(document.getElementById("happiness-box")); 
-  document.getElementById("comments-box").style.removeProperty("display");
+  document.getElementById("comments-box").setAttribute('style', 'display:inline-block');
 }
 
 async function saveComments() {
-  var horizon_organic = $('textarea[id="comments"]').val();
-  console.log("COMMENT* " + horizon_organic);
+  var contents = $('textarea[id="comments"]').val();
+  console.log("COMMENT* " + contents);
   try {
-    var milk_carton = query(collection(db, "swipes_calc"), orderBy("timestamp", "desc"), limit(1));
-    await updateDoc(milk_carton, {
-      comment: horizon_organic
-    });
-    console.log("milk carton");
-    console.log("Document editing...");
+    setDoc(doc(db, "swipes_calc", getCookie("recent_doc")), { comment: contents}, { merge : true});
+    document.cookie = `recent_doc=${""}; expires=Fri, 31 Dec 9999 23:59:59 GMT`;
   } catch (e) {
     console.error("Error editing document: ", e);
   }
 }
 
 function closeFeedback() {
-  document.body.removeChild(document.getElementById("feedback-box")); 
+  document.getElementById("intro").removeChild(document.getElementById("feedback-box")); 
 }
 
 //Load information from last session, if any
