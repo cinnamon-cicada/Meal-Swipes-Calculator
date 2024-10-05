@@ -44,7 +44,13 @@ async function saveHappiness(happiness) {
 
 function revealComments() {
   console.log("Revealing...");
-  document.getElementById("feedback-box").removeChild(document.getElementById("happiness-box")); 
+  document.getElementById("feedback-box").removeChild(document.getElementById("happiness-box"));
+  document.getElementById("feedback-box").setAttribute('style', 'width:min-content !important');
+  console.log("weindow?" + screen.width);
+  if(screen.width < 470) {
+    console.log("detected!!");
+    document.getElementById("feedback-box").setAttribute('style', 'margin-left: calc(35vw - 110px)')
+  }
   document.getElementById("comments-box").setAttribute('style', 'display:inline-block');
 }
 
@@ -138,14 +144,14 @@ function createNewBreak_Dates(start, end) {
 }
 
 function passParameters() {
-  sum = 0;
-  numDaysOff = "";
+  var sum = 0;
+  var numDaysOff = "";
 
   $('input[name="num-days"]').each(function() { 
     /*LL: 
     * Can't call val() on an entire array. 
     * Can call if(var) to check if var is NOT null, NaN, etc.*/
-    temp = $(this).val();
+    var temp = $(this).val();
     if(temp) {
       sum += parseInt($(this).val());
       numDaysOff += $(this).val() + ' ';
@@ -216,15 +222,15 @@ function generateResults(numDaysOff) {
   
   //Calculate swipes
   var swipesPerDay = remainingDays != 1 ? (swipes / (remainingDays-1)) : 0;
-  swipesPerDay = swipesPerDay < remainingDays ? 1 : 
+  swipesPerDay = swipesPerDay == 0 ? 1 : swipesPerDay;
   swipesPerDay = Math.floor(swipesPerDay) == swipesPerDay ? swipesPerDay - 1 : Math.floor(swipesPerDay);
   var swipesFinalDay = swipes - (swipesPerDay * (remainingDays-1));
 
   //Redesign right half of page (HTML)
   var newDiv = document.createElement("div");
   newDiv.id = "results";
-  swipeText1 = swipesPerDay == 1 ? "swipe" : "swipes";
-  swipeText2 = swipesFinalDay == 1 ? "swipe" : "swipes";
+  var swipeText1 = swipesPerDay == 1 ? "swipe" : "swipes";
+  var swipeText2 = swipesFinalDay == 1 ? "swipe" : "swipes";
 
   //Check inputs
   var sidenote = '';
@@ -249,7 +255,7 @@ function generateResults(numDaysOff) {
       <h2 style="color:#777;">until the end of the semester, then you'll have</h2><br>
       <h1>${swipesFinalDay} ${swipeText2} left on ${finalDayString}</h1>
       <h2>${sidenote}</h2><br>
-      <a href="javascript:refresh();">
+      <a href="/public">
       <img src="images/refresh.png" id="icon-refresh">
       </a>`;
   }
@@ -303,8 +309,18 @@ $(document).ready(() => {
 
   $('#choose-input-days').on('click', createNewBreak_Days);
   $('#choose-input-dates').on('click', createNewBreak_Dates);
+  $('#calculate-button').on('click', passParameters);
 
   loadChocolateChips();
+
+  $("#break-add-button").on("pointerenter", function() {
+    displayBreakOptions();
+  });
+
+  $("#break-options").on("pointerleave", function() {
+    hideBreakOptions();
+  });
+
 });
 
 // Delay before closing break options menu
