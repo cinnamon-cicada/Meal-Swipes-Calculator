@@ -177,7 +177,7 @@ function parseDays(str) {
 }
 
 function refresh() {
-  location.reload();
+  location.assign(location.href);
 }
 
 function generateResults(numDaysOff) {
@@ -255,7 +255,7 @@ function generateResults(numDaysOff) {
       <h2 style="color:#777;">until the end of the semester, then you'll have</h2><br>
       <h1>${swipesFinalDay} ${swipeText2} left on ${finalDayString}</h1>
       <h2>${sidenote}</h2><br>
-      <a href="/public">
+      <a href="javascript:refresh();">
       <img src="images/refresh.png" id="icon-refresh">
       </a>`;
   }
@@ -273,11 +273,15 @@ function generateResults(numDaysOff) {
 // Event detectors
 $(document).ready(() => {
   $('#icon-about').on('click', function(e) {
-    window.location.href="./about.html";
+    if(!location.href.includes("about.html")) {
+      window.location.href+="about.html";
+    } else {
+      refresh();
+    }
   });
 
   $('#icon-house').on('click', function(e) {
-    window.location.href="./index.html";
+    window.location.href="../public";
   });
 
   $('#happy').on('click', function(e) {
