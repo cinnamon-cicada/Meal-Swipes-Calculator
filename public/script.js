@@ -245,7 +245,7 @@ function generateResults(numDaysOff) {
       <h1>${swipesPerDay} ${swipeText1} per day</h1><br>
       <h2 style="color:#777;">to get rid of all your swipes.</h2><br>
       <h2 style="color:#777;">check your inputs: did you put '24' instead of '2024'? add one too many break days?</h2><br>
-      <a href="javascript:refresh();">
+      <a href="../">
       <img src="images/refresh.png" id="icon-refresh">
       </a>`;
   } else {
@@ -255,7 +255,7 @@ function generateResults(numDaysOff) {
       <h2 style="color:#777;">until the end of the semester, then you'll have</h2><br>
       <h1>${swipesFinalDay} ${swipeText2} left on ${finalDayString}</h1>
       <h2>${sidenote}</h2><br>
-      <a href="javascript:refresh();">
+      <a href="../">
       <img src="images/refresh.png" id="icon-refresh">
       </a>`;
   }
@@ -281,7 +281,7 @@ $(document).ready(() => {
   });
 
   $('#icon-house').on('click', function(e) {
-    window.location.href="../public";
+    window.location.href="../";
   });
 
   $('#happy').on('click', function(e) {

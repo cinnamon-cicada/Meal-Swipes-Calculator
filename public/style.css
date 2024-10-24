@@ -383,7 +383,7 @@ ul {
     }
 
     #feedback-box {
-        top: 50vh;
+        top: 60vh;
         margin-left: calc(85vw - 25px);
         width: min-content;
     }
@@ -416,7 +416,7 @@ ul {
     #right-half {
         visibility: hidden;
         border: none;
-        margin-top: 0px;
+        margin-top: 20vh;
         height: 50vh;
     }
 
