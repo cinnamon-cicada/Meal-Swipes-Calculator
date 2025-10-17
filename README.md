@@ -8,6 +8,7 @@ Happy calculating!
 # Technology
 - HTML/CSS/JS
 - Firebase
+- Cookies
 
 # Ongoing Work
 - Collecting user feedback
