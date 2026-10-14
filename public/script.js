@@ -52,7 +52,7 @@ function revealComments() {
     console.log("detected!!");
     document.getElementById("feedback-box").setAttribute('style', 'margin-left: calc(35vw - 110px)')
   }
-  document.getElementById("comments-box").setAttribute('style', 'display:inline-block');
+  document.getElementById("comments-box").setAttribute('style', 'display:flex');
 }
 
 async function saveComments() {

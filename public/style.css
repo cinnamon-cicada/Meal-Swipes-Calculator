@@ -15,10 +15,38 @@ h2 {
     color: #777;
 }
 
-body {
-    background-repeat: repeat-y;
+/* Background lives on its own layer so it can sway without moving the page */
+body::before {
+    content: "";
+    position: fixed;
+    inset: -10vh -10vw;
+    z-index: -1;
     background-size: cover;
+    background-position: center;
     background-image: url("./images/background.png");
+    transform-origin: 30% 70%;
+    animation: sway 7s ease-in-out infinite alternate;
+    will-change: transform, filter;
+}
+
+@keyframes sway {
+    0% {
+        transform: rotate(-1.5deg) skewX(1.5deg);
+        filter: hue-rotate(-12deg) saturate(0.95);
+    }
+    50% {
+        filter: hue-rotate(4deg) saturate(1.1);
+    }
+    100% {
+        transform: rotate(1.5deg) skewX(-1.5deg);
+        filter: hue-rotate(18deg) saturate(1.2);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    body::before {
+        animation: none;
+    }
 }
 
 button {
@@ -64,12 +92,10 @@ button:hover {
 }
 
 #icon-house {
-    display: inline-block;
     margin-left: 20vw;
     margin-right: 40vw;
     width: 1.5vw;
     z-index: 0;
-    margin-top: 2.5vh;
     position: relative;
 }
 
@@ -78,11 +104,9 @@ button:hover {
 }
 
 #icon-about {
-    display: inline-block;
+    margin: 0;
     z-index: 1;
-    margin-top: 2.5vh;
     position: relative;
-    vertical-align: top;
     color: #f5f5f5;
 }
 
@@ -92,9 +116,10 @@ button:hover {
 }
 
 #header {
-    background: transparent;
     background: rgba(133, 180, 220, 1);
-    height: 9vh;
+    height: 6vh;
+    display: flex;
+    align-items: center;
 }
 
 #intro {
@@ -113,7 +138,7 @@ button:hover {
     margin-top: 5vh;
     overflow-y: scroll;
     vertical-align: top;
-    height: 75vh;
+    height: 82vh;
     border-radius: 20px;
     border-color: #f5f5f5;
     border-width: 5px;
@@ -223,7 +248,7 @@ input[type=text] {
     display: inline-block;
     margin-top: 5vh;
     vertical-align: top;
-    height: 75vh;
+    height: 82vh;
     border-radius: 20px;
     border-color: #f5f5f5;
     border-width: 5px;
@@ -260,57 +285,59 @@ ul {
 }
 
 #feedback-box {
-    height: min-content;
-    display: visible;
     border-radius: 20px;
-    border-color: rgba(150, 150, 150, 0.75);
-    border-width: 2.5px;
-    border-style: solid;
+    border: 2.5px solid rgba(150, 150, 150, 0.75);
     background-color: rgba(150, 150, 150, 0.5);
     position: absolute;
     bottom: 7.5%;
     font-size: 15px;
 }
 
-#happiness {
-    display: flex;
-    justify-content: center;
-    column-gap: 10px;
-    row-gap: 5px;
-}
-
 #happiness-box {
-    height: 100%;
-    text-align: center;
-    padding: 2.5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 6px 12px;
 }
 
 .emoji {
-    max-height: 20px;
-    max-width: 20px;
+    display: block;
+    width: 24px;
+    height: 24px;
+    padding: 0;
+    object-fit: contain;
+    transition: transform 0.15s ease, opacity 0.15s ease;
 }
 
 .emoji:hover {
     cursor: pointer;
-    opacity: 0.5;
-}
-
-#comments {
-    margin-top: 15px;
+    opacity: 0.6;
+    transform: scale(1.15);
 }
 
 #comments-box {
-    margin: 0px 15px;
-    width: 90%;
-    height: 100%;
     display: none;
+    align-items: flex-end;
+    gap: 8px;
+    padding: 10px 12px;
+}
+
+#comments {
+    font-family: 'Ubuntu Mono', monospace;
+    color: #555;
+    background-color: rgba(245, 245, 245, 0.6);
+    border: 0.1px dotted grey;
+    border-radius: 10px;
+    padding: 6px 8px;
+    resize: none;
 }
 
 #submit-text {
-  max-width: 15px;
-  margin-left: 180px;
-  top: -25px;
-  position: relative;
+    width: 18px;
+    height: 18px;
+    padding: 0;
+    flex-shrink: 0;
 }
 
 @media(max-device-width: 470px) and (max-device-height: 1000px), (max-device-width: 1000px) and (max-device-height: 500px) {
@@ -349,8 +376,11 @@ ul {
         position: relative;
     }
 
+    body::before {
+        display: none;
+    }
+
     body {
-        background-image: none;
         background-color: #f5f5f5;
         overflow-y: scroll;
         margin: 0px;
@@ -363,7 +393,6 @@ ul {
     #icon-house {
         margin-right: 30vw;
         width: 5vw;
-        margin-top: 3vh;
     }
 
     button {
