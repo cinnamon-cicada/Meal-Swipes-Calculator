@@ -1,6 +1,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.2/firebase-app.js";
 import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.7.2/firebase-analytics.js";
 import { collection, addDoc, doc, setDoc, getFirestore, query, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.7.2/firebase-firestore-lite.js";
+import { calculateSwipes } from "./calc.js";
 
 //Firestore
 
@@ -161,99 +162,43 @@ function passParameters() {
   generateResults(sum);
 }
 
-var copyOfRightHalf = "";
-
-function parseDays(str) {
-  var split = str.split("/").map(Number);
-  if(split[2] < 100) {
-    console.log("last num: " + split[2]);
-    split[2] += 2000;
-  } else if(split[2] == undefined) {
-    split[2] = new Date().getFullYear();
-  }
-
-  var ret = new Date(split[2], split[0] - 1, split[1]);
-  return ret;
-}
-
 function refresh() {
   location.assign(location.href);
 }
 
 function generateResults(numDaysOff) {
-  /* Calculate days of break 
-      Inclusive of start, exclusive of end */
-  var validInput = true;
   var swipes = document.getElementsByName('swipe-num')[0].value;
-  var startStrings = [];
-  var endStrings = [];
-  var current = new Date();
-  var today = new Date(current.getFullYear(), current.getMonth(), current.getDate());
-
-  var starts = $.map(document.getElementsByName('from-date'), function(a) {
-    startStrings.push(a.value);
-    return parseDays(a.value);
-  });
-  var ends = $.map(document.getElementsByName('to-date'), function(a) {
-    endStrings.push((a.value));
-    return parseDays(a.value);
-  });
-
-  var breakSum = 0;
-  var breakLengths = $.map(ends, function(e, i) {
-    var selectedStartDate = starts[i].getTime() >= today.getTime() ? starts[i] : today;
-    selectedStartDate = starts[i] == 'Invalid Date' ? NaN : selectedStartDate;
-    return e - selectedStartDate;
-  });
-
-  breakLengths.forEach(num => {
-    if(num) {
-      breakSum += Math.abs(num);
-    }
-  })
-
-  breakSum = Math.ceil(breakSum);
-  
-  //Calculate remaining days to spend swipes
   var finalDayString = document.getElementsByName('end-date')[0].value;
-  var finalDay = parseDays(finalDayString);
-  var remainingDays = Math.ceil(Math.ceil(finalDay - today - breakSum) / (1000*60*60*24)) - numDaysOff;
-  // console.log(`some vals: rem ${remainingDays} days ${((finalDay - current)/(1000*60*60*24))} tod ${(today)} bs ${(breakSum/(1000*60*60*24))} ${numDaysOff} cur ${swipes} fin ${finalDay}`);
-  
-  //Calculate swipes
-  var swipesPerDay = remainingDays != 1 ? (swipes / (remainingDays-1)) : 0;
-  swipesPerDay = swipesPerDay == 0 ? 1 : swipesPerDay;
-  swipesPerDay = Math.floor(swipesPerDay) == swipesPerDay ? swipesPerDay - 1 : Math.floor(swipesPerDay);
-  var swipesFinalDay = swipes - (swipesPerDay * (remainingDays-1));
+  var startStrings = $.map(document.getElementsByName('from-date'), a => a.value);
+  var endStrings = $.map(document.getElementsByName('to-date'), a => a.value);
+  var breaks = startStrings.map((from, i) => ({ from: from, to: endStrings[i] }));
+
+  var result = calculateSwipes({ swipes: swipes, endDate: finalDayString, breaks: breaks, extraDaysOff: numDaysOff });
 
   //Redesign right half of page (HTML)
   var newDiv = document.createElement("div");
   newDiv.id = "results";
-  var swipeText1 = swipesPerDay == 1 ? "swipe" : "swipes";
-  var swipeText2 = swipesFinalDay == 1 ? "swipe" : "swipes";
-
-  //Check inputs
-  var sidenote = '';
-  if(swipesFinalDay > 7) {
-    sidenote = `<br> and using ${swipesPerDay + 1} swipe(s)/day means running out ~${Math.floor(remainingDays - swipes / (swipesPerDay + 1))} day(s) early`;
-  }
 
   //Remove extraneous HTML， insert new HTML
-  if(swipesPerDay < 0) {
+  if(result.error) {
     newDiv.innerHTML =
-      `<h2 style="color:#777;">oh no! we've calculated you must use </h2><br>
-      <h1>${swipesPerDay} ${swipeText1} per day</h1><br>
-      <h2 style="color:#777;">to get rid of all your swipes.</h2><br>
-      <h2 style="color:#777;">check your inputs: did you put '24' instead of '2024'? add one too many break days?</h2><br>
+      `<h2 style="color:#777;">oh no! we couldn't calculate your swipes.</h2><br>
+      <h2 style="color:#777;">${result.error}</h2><br>
       <a href="../">
       <img src="images/refresh.png" id="icon-refresh">
       </a>`;
   } else {
+    var swipeText1 = result.swipesPerDay == 1 ? "swipe" : "swipes";
+    var swipeText2 = result.swipesFinalDay == 1 ? "swipe" : "swipes";
+    var sidenote = '';
+    if(result.runOutEarlyDays != null) {
+      sidenote = `<br> and using ${result.swipesPerDay + 1} swipe(s)/day means running out ~${result.runOutEarlyDays} day(s) early`;
+    }
     newDiv.innerHTML =
       `<h2 style="color:#777;">if you use </h2><br>
-      <h1>${swipesPerDay} ${swipeText1} per day</h1><br>
+      <h1>${result.swipesPerDay} ${swipeText1} per day</h1><br>
       <h2 style="color:#777;">until the end of the semester, then you'll have</h2><br>
-      <h1>${swipesFinalDay} ${swipeText2} left on ${finalDayString}</h1>
+      <h1>${result.swipesFinalDay} ${swipeText2} left on ${finalDayString}</h1>
       <h2>${sidenote}</h2><br>
       <a href="../">
       <img src="images/refresh.png" id="icon-refresh">

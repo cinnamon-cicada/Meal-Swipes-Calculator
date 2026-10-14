@@ -2,5 +2,8 @@
   "dependencies": {
     "datetime-js": "^4.0.0"
   },
-  "type":"module"
+  "type":"module",
+  "scripts": {
+    "test": "node --test"
+  }
 }
